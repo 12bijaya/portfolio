@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio | Sai</title>
+    <title>Iconic Whisper | Cybersecurity Portfolio</title>
 
     <link rel="icon" type="image/png" href="iconic.jpg">
     <link rel="stylesheet" href="style.css">
@@ -89,75 +89,119 @@
 </head>
 <body>
 
-    <canvas id="matrixCanvas"></canvas>
-                                                        <!-- Matrix -->
-    <script src="/JAVASCRIPT/matrix.js"></script>
-
     <header class="header">
-        <a href="#" class="logo">{Bijaya Kumal} </a>
-
+        <a href="#whoami" class="logo">Iconic Whisper</a>
         <nav class="navbar">
-            <a href="#home" style="--i:1;" class="active">Home</a>
-            <a href="#about" style="--i:2;">About</a>
-            <a href="#skill" style="--i:3;">Skills</a>
-            <a href="#project" style="--i:4;">Projects</a>
-            <a href="#contact" style="--i:5;">Contact</a>
+            <a href="#whoami" class="active">whoami</a>
+            <a href="#about">About</a>
+            <a href="#skills">Skills</a>
+            <a href="#projects">Projects</a>
+            <a href="#blog">Blog</a>
+            <a href="#contact">Contact</a>
         </nav>
+        <button class="nav-toggle" aria-label="Toggle navigation"><i class='bx bx-menu'></i></button>
     </header>
 
-    <section id="home" class="home">
-        <div class="home-content" data-scroll data-scroll-speed="-5">
-            <h3 class="mu">Hello, It's me</h3>
-            <h1>Iconic Whisper</h1>
-            <h3>And I'm a <span class="pro-text">
-                <script>
-                   var typed = new Typed(".pro-text", {
-                      strings: [
-                        "Ethical Hacker",
-                        "Gamer",
-                        "Programmer",
-                        "Linux Administrator",
-                        "Video Editor",
-                        "Reverse Engineer"
-                      ],
-                      typeSpeed: 100,   
-                      backSpeed: 100,   
-                      backDelay: 1000,  
-                      loop: true        
-                    });
-                </script>
-            </span></h3>
-            
-            <p>This portfolio highlights my passion for cybersecurity and my commitment to ethical practices.</p>
-            
-            <p>  &emsp; &emsp;This portfolio highlights my passion for cybersecurity and my commitment to ethical practices. <br> <br>
-                &emsp; &emsp;I have acquired fundamental knowledge and skills in various areas of ethical hacking, 
-                allowing me to contribute to the security of organizations and individuals. <br> <br>
-                &emsp; &emsp;Hacked multiple Wifi network that were based on WPS protocol.  
-            </p>
-
-            <div class="home-sci">
-                <a href="https://github.com/12bijaya" target="_blank"><i class='bx bxl-github'></i></a>
-                <a href="https://www.linkedin.com/in/bijaya-kumal/" target="_blank"><i class='bx bxl-linkedin'></i></a>
-                <a href="tel:9745671633" target="_blank"><i class='bx bxs-phone'></i></a>
-                <a href="https://www.instagram.com/1_iconic_whisper_.z/" target="_blank"><i class='bx bxl-instagram'></i></a>
-                <a href="https://wa.me/9745671633" target="_blank"><i class='bx bxl-whatsapp'></i></a>
-                <a href="tel:9745671633" target="_blank"><i class='bx bxs-phone'></i></a>
+    <main>
+        <section id="whoami" class="home reveal" aria-label="Who am I">
+            <div class="home-content">
+                <h1 class="hero-title animate-fade-up">Greetings!!<br>citizens of the world.<br>I'm <span class="accent">Iconic Whisper</span></h1>
+                <h3 class="hero-sub animate-fade-up animate-fade-delay">CTF Player</h3>
+                <p class="hero-desc animate-fade-up animate-fade-delay2">
+                    I'm a cybersecurity enthusiast on the path to offensive security. From CTFs to hands‑on labs,
+                    I learn by building, breaking, and documenting. Let's connect and collaborate.
+                </p>
+                <div class="home-sci">
+                    <a href="https://github.com/12bijaya" target="_blank" rel="noopener" aria-label="GitHub"><i class='bx bxl-github'></i></a>
+                    <a href="https://www.linkedin.com/in/bijaya-kumal/" target="_blank" rel="noopener" aria-label="LinkedIn"><i class='bx bxl-linkedin'></i></a>
+                    <a href="https://discord.com/channels/@me/1395065051840254033" target="_blank" rel="noopener" aria-label="Discord"><i class='bx bxl-discord'></i></a>
+                </div>
+                <a href="#projects" class="btn-box">See my creations</a>
+                <a href="#blog" class="btn-box btn-ghost">Look at my solves</a>
             </div>
-           <a href="" class="btn-box" download="#">Download CV</a>
-        </div>
-
-        <div class="home-img">
-            <div class="glowing-circle">
-                <span></span>
-                <span></span>
-                <div class="image">
-                    <img src="iconic.jpg" alt="">
+            <div class="home-img">
+                <div class="avatar-frame">
+                    <div class="avatar-glow"></div>
+                    <img src="iconic.jpg" alt="Profile photo" />
                 </div>
             </div>
-        </div>
+        </section>
 
-    </section>
+        <section id="about" class="section reveal">
+            <div class="container">
+                <h2>About</h2>
+                <p>
+                    I focus on cybersecurity and systems, sharpening skills through CTFs, labs, and hands‑on builds.
+                    My core interests include binary exploitation, reverse engineering, DFIR, and Linux internals.
+                    I document what I learn with clear, reproducible writeups and prioritize ethical research and
+                    responsible disclosure.
+                </p>
+                <div class="info-box">
+                    <p>
+                        Currently exploring exploit mitigations (ASLR, NX, PIE), practicing Ghidra/radare2 workflows,
+                        and building small tools in C, Python, and Bash. Open to collaborating on security projects and
+                        writeups.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="section reveal">
+            <div class="container">
+                <h2>Skills</h2>
+                <ul class="skills-list">
+                    <li>x86_64 Linux assembly</li>
+                    <li>C / C++</li>
+                    <li>Python</li>
+                    <li>JavaScript (Node.js, React)</li>
+                    <li>Bash scripting</li>
+                    <li>MySQL</li>
+                    <li>Linux, shell, system internals</li>
+                    <li>Reverse engineering basics (Ghidra, radare2)</li>
+                    <li>Intro exploitation (buffers, ASLR, ROP)</li>
+                    <li>Forensics workflow (Volatility, strings, timeline)</li>
+                    <li>Networking fundamentals and threat modeling</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="projects" class="section reveal">
+            <div class="container">
+                <h2>My Projects</h2>
+                <div class="projects-grid" id="projects-grid">
+                    <!-- Add project cards later -->
+                </div>
+            </div>
+        </section>
+
+
+
+        <section id="blog" class="section reveal">
+            <div class="container">
+                <h2>Blogs & Writesups</h2>
+                <p>Posts are loaded from a JSON file so you can add entries easily.</p>
+                <div id="blog-list" class="blog-list" aria-live="polite"></div>
+            </div>
+        </section>
+
+        <section id="contact" class="section reveal">
+            <div class="container">
+                <h2>Contact</h2>
+                <ul class="contact-list">
+                    <li><i class='bx bxs-envelope'></i> <a href="mailto:iconic.whisper@example.com">iconic.whisper@example.com</a></li>
+                    <li><i class='bx bxs-phone'></i> <a href="tel:9745671633">+977 9745671633</a></li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© <span id="year"></span> Iconic Whisper. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="scripts.js"></script>
 
 </body> 
 </html>

@@ -1,0 +1,732 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>ROP(Return oriented programming)</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.highlight-default_background {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.highlight-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.block-color-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(174, 130, 0, 0.223); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 99, 174, 0.172); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="261e7660-b64c-809c-a6df-c9430e5f3d68" class="page sans"><header><h1 class="page-title">ROP(Return oriented programming)</h1><p class="page-description"></p></header><div class="page-body"><h1 id="261e7660-b64c-8012-9c49-c3ba1adb10f2" class="">What is return oriented programming </h1><p id="261e7660-b64c-808e-b278-e9e50c02e692" class="">Return oriented programming is the Discovered in 1997 by Solar Designer which main concept is to reuse the code of binary itself to hijack the program during process. </p><p id="261e7660-b64c-8036-b3f6-e57310c5dbad" class="">The generalization of Return-to-libc is Return Oriented Programming.</p><p id="261e7660-b64c-804c-9688-d7e545931939" class="">It is used to bypass the aslr and the nx bit in the program.</p><figure id="261e7660-b64c-8036-9d40-c105ba709e81" class="image"><a href="ROP(Return%20oriented%20programming)%20261e7660b64c809ca6dfc9430e5f3d68/image.png"><img style="width:709.9909057617188px" src="ROP(Return%20oriented%20programming)%20261e7660b64c809ca6dfc9430e5f3d68/image.png"/></a></figure><p id="261e7660-b64c-8021-8138-c0ca1e93da3c" class="">The above figure shows the actual meaning of the ROP where a statue is made using every block from the given big block. You can imagine the Big block as binary and the next statue is ROP chain. This is the ultimate beauty of rop chain.</p><figure id="261e7660-b64c-8039-8600-e691995d809a" class="image"><a href="ROP(Return%20oriented%20programming)%20261e7660b64c809ca6dfc9430e5f3d68/image%201.png"><img style="width:709.9810180664062px" src="ROP(Return%20oriented%20programming)%20261e7660b64c809ca6dfc9430e5f3d68/image%201.png"/></a></figure><p id="261e7660-b64c-80f4-b4b2-c0b3b00ca685" class="">Lego can be the perfect way to understand ROP chain.</p><h3 id="261e7660-b64c-802b-a17c-cfff5b23d1ac" class="">1. <strong>Resources on the Stack</strong></h3><p id="261e7660-b64c-8020-b284-e8ba7dc58d5f" class="">The stack is the attacker’s &quot;scratchpad&quot;. When you overwrite a buffer and overwrite the saved return address, the stack will contain:</p><ul id="261e7660-b64c-8060-9b4c-c19da53a7d8e" class="bulleted-list"><li style="list-style-type:disc">Return addresses (gadgets you want to run)</li></ul><ul id="261e7660-b64c-8006-aca8-cfea29eb93ee" class="bulleted-list"><li style="list-style-type:disc">Data (constants, strings, syscall numbers, etc.)</li></ul><p id="261e7660-b64c-804b-97ff-ede66627a5ee" class="">📌 Example:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="261e7660-b64c-8015-b37a-e74e5f4e511a" class="code code-wrap"><code class="language-Assembly" style="white-space:pre-wrap;word-break:break-all">0x08049012: pop eax; ret
+0x08049034: int 0x80
+
+</code></pre><p id="261e7660-b64c-8045-861d-fdbd1aae500c" class="">Stack layout (controlled by attacker):</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="261e7660-b64c-8081-acbe-ce9d361f919c" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">[ saved ret -&gt; 0x08049012 ]  ; pop eax; ret
+[ 0xb ]                      ; syscall number (execve)
+[ 0x08049034 ]               ; int 0x80
+
+</code></pre><p id="261e7660-b64c-80a7-8681-fcb8e8aa5187" class="">This sets <code>eax = 0xb</code> (execve syscall number) and then executes the syscall.</p><hr id="261e7660-b64c-80d6-bc1c-e4b4f25f354c"/><h3 id="261e7660-b64c-801a-b4fd-e480c3ae26e2" class="">2. <strong>Janitorial Gadgets</strong></h3><p id="261e7660-b64c-8067-97f1-f182df7a5fcc" class="">These are &quot;clean-up gadgets&quot; that pop values off the stack but don’t do anything useful except adjusting the stack pointer.</p><p id="261e7660-b64c-8047-b226-f33b23d78941" class="">📌 Example:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="261e7660-b64c-8086-9f40-d7ccf47816b6" class="code code-wrap"><code class="language-Assembly" style="white-space:pre-wrap;word-break:break-all">0x08049056: pop ebx; pop ecx; pop edx; ret
+
+</code></pre><p id="261e7660-b64c-8055-92dd-c4846e662a2d" class="">This clears 3 values from the stack into registers. If you only need to set <code>ebx</code>, you still have to &quot;feed&quot; ecx and edx junk values.</p><p id="261e7660-b64c-80bf-9ce6-c431eb539b54" class="">Suppose your stack (attacker controlled) looks like this at the moment execution hits the gadget:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="261e7660-b64c-80e8-9c79-f2b9c6771dfe" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">esp -&gt; 0x11111111   ; value for ebx
+       0x22222222   ; value for ecx
+       0x33333333   ; value for edx
+       0x44444444   ; next gadget address
+
+</code></pre><hr id="261e7660-b64c-80a0-92c7-d138ba17e85c"/><h2 id="261e7660-b64c-804a-b532-ffc6380a1936" class="">🔄 Step by step</h2><ol type="1" id="261e7660-b64c-80c0-b205-dbae93eeb9e8" class="numbered-list" start="1"><li><code><strong>pop ebx</strong></code><ul id="261e7660-b64c-80ab-b3bd-d6a8efad2385" class="bulleted-list"><li style="list-style-type:disc"><code>ebx = 0x11111111</code></li></ul><ul id="261e7660-b64c-80e3-adfd-d42f16283a61" class="bulleted-list"><li style="list-style-type:disc"><code>esp</code> → now points to <code>0x22222222</code></li></ul></li></ol><ol type="1" id="261e7660-b64c-80e0-bde7-f64bbb4b271e" class="numbered-list" start="2"><li><code><strong>pop ecx</strong></code><ul id="261e7660-b64c-8041-97c1-c4efada3ce27" class="bulleted-list"><li style="list-style-type:disc"><code>ecx = 0x22222222</code></li></ul><ul id="261e7660-b64c-804f-ad66-dc3858b1f400" class="bulleted-list"><li style="list-style-type:disc"><code>esp</code> → now points to <code>0x33333333</code></li></ul></li></ol><ol type="1" id="261e7660-b64c-806b-a1b6-c9ee5a3ee5b5" class="numbered-list" start="3"><li><code><strong>pop edx</strong></code><ul id="261e7660-b64c-80cb-9568-ea7c0342c751" class="bulleted-list"><li style="list-style-type:disc"><code>edx = 0x33333333</code></li></ul><ul id="261e7660-b64c-80c2-8857-dc81329c44f6" class="bulleted-list"><li style="list-style-type:disc"><code>esp</code> → now points to <code>0x44444444</code></li></ul></li></ol><ol type="1" id="261e7660-b64c-807e-ab7d-d0237c23c291" class="numbered-list" start="4"><li><code><strong>ret</strong></code><ul id="261e7660-b64c-80a8-abf0-fb5dc019bdbd" class="bulleted-list"><li style="list-style-type:disc">Takes <code>0x44444444</code> from the stack</li></ul><ul id="261e7660-b64c-8063-8740-e38af1c176eb" class="bulleted-list"><li style="list-style-type:disc">Jumps execution to <code>0x44444444</code></li></ul></li></ol><p id="261e7660-b64c-80c9-a667-dd787e975ef6" class="">They’re &quot;janitorial&quot; because they <strong>clean up</strong> the stack.</p><hr id="261e7660-b64c-8013-a141-c32cf0dba9c7"/><h3 id="261e7660-b64c-80fc-9da1-e9fba54fa38e" class="">3. <strong>Storing Values into Registers</strong></h3><p id="261e7660-b64c-80b7-ad2d-d15c9356d84a" class="">To control registers, you look for <code>pop reg; ret</code> gadgets.</p><p id="261e7660-b64c-80a0-9467-c806dd378546" class="">📌 Example:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="261e7660-b64c-80ad-b9c9-d5d900968c54" class="code code-wrap"><code class="language-Assembly" style="white-space:pre-wrap;word-break:break-all">0x08049012: pop eax; ret
+0x08049034: pop ebx; ret
+
+</code></pre><p id="261e7660-b64c-803a-9adc-c204f5032fe5" class="">Stack layout:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="261e7660-b64c-80f1-a4c9-f9a14069877a" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">[ 0x08049012 ]   ; pop eax
+[ 0x0b ]         ; eax = 11 (execve)
+[ 0x08049034 ]   ; pop ebx
+[ 0x41414141 ]   ; ebx = &quot;AAAA&quot;
+
+</code></pre><hr id="261e7660-b64c-8053-9dc4-cfbb8eb43c2e"/><h3 id="261e7660-b64c-800c-9d03-d5bb9b1819ef" class="">4. <strong>Rare and Common Gadgets</strong></h3><ul id="261e7660-b64c-80d4-9687-fa470539e6a6" class="bulleted-list"><li style="list-style-type:disc"><strong>Common gadgets</strong>: <code>pop reg; ret</code>, <code>mov [reg], reg2; ret</code>, <code>xchg eax, esp; ret</code></li></ul><ul id="261e7660-b64c-803e-bed0-cdfd50adb7ab" class="bulleted-list"><li style="list-style-type:disc"><strong>Rare gadgets</strong>: Syscalls, <code>int 0x80</code>, <code>syscall</code>, <code>leave; ret</code>, or multi-register moves.</li></ul><p id="261e7660-b64c-8040-b7e0-c2a4ec112a67" class="">Example of a <strong>rare gadget</strong>:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="261e7660-b64c-80f1-a8bf-e9252f33bea5" class="code code-wrap"><code class="language-Assembly" style="white-space:pre-wrap;word-break:break-all">0x0804a123: int 0x80
+
+</code></pre><p id="261e7660-b64c-8088-a2dd-ce938ec8c1f4" class="">(very powerful since you don’t need to build a syscall manually).</p><hr id="261e7660-b64c-808d-9753-fe2989cb671f"/><h3 id="261e7660-b64c-80e3-b192-d4a2f1e78282" class="">5. <strong>Storing Addresses into Registers</strong></h3><p id="261e7660-b64c-8004-86a7-df1cc48f9e30" class="">Same as before, but now instead of constants, you load <strong>pointers</strong>.</p><p id="261e7660-b64c-8041-a74a-e1649cc89c75" class="">📌 Example:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="261e7660-b64c-8030-acee-fb58d299d42d" class="code code-wrap"><code class="language-Assembly" style="white-space:pre-wrap;word-break:break-all">0x08049056: pop ebx; ret
+
+</code></pre><p id="261e7660-b64c-801c-bbe2-e811949b2801" class="">Stack:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="261e7660-b64c-80dc-b601-d41b848e2e47" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">[ 0x08049056 ]   ; pop ebx
+[ 0xdeadbeef ]   ; ebx = 0xdeadbeef (some string in memory)
+
+</code></pre><hr id="261e7660-b64c-8099-9540-ff72b2f94391"/><h3 id="261e7660-b64c-80ac-8507-ca9c3b98cdae" class="">6. <strong>Stack Pivot</strong></h3><p id="261e7660-b64c-80d2-b2a4-e48c2b9690d8" class="">When you don’t have enough space in your original buffer, you move (<code>pivot</code>) the stack pointer (<code>esp</code>) to another attacker-controlled location (like heap or BSS).</p><p id="261e7660-b64c-804a-8c01-c3941f8afc86" class="">📌 Example gadget:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="261e7660-b64c-80fb-97b2-fd4b64ad8a20" class="code code-wrap"><code class="language-Assembly" style="white-space:pre-wrap;word-break:break-all">0x08049090: xchg eax, esp; ret
+
+</code></pre><p id="261e7660-b64c-805b-aee2-f63b693a759c" class="">If you first set <code>eax = heap_addr</code>, this gadget will swap <code>esp</code> with it → the stack now points to your fake ROP chain in the heap.</p><hr id="261e7660-b64c-80fe-9c75-c860d33d5e8d"/><h3 id="261e7660-b64c-80e1-9a65-dd4806772251" class="">7. <strong>Data Transfer</strong></h3><p id="261e7660-b64c-802b-8bfd-df7474816bf8" class="">Using gadgets that move data between registers and memory.</p><p id="261e7660-b64c-801e-aeab-c305dbeadc32" class="">📌 Example:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="261e7660-b64c-80cd-be23-debc0d565c91" class="code code-wrap"><code class="language-Assembly" style="white-space:pre-wrap;word-break:break-all">0x08049123: mov [ecx], eax; ret
+
+</code></pre><p id="261e7660-b64c-8089-80c4-cec0a4555c5c" class="">This writes the value of <code>eax</code> into memory pointed by <code>ecx</code>. Useful for writing strings like <code>&quot;/bin/sh&quot;</code> into memory.</p><p id="261e7660-b64c-80cc-bed0-e6d0df741d73" class="">Stack for writing <code>/bin/sh</code>:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="261e7660-b64c-8051-940c-e5ada05fa3a3" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">[ pop eax; ret ]   ; gadget
+[ 0x6e69622f ]     ; eax = &quot;/bin&quot;
+[ pop ecx; ret ]
+[ 0x080ea060 ]     ; ecx = writable memory
+[ mov [ecx], eax; ret ]
+
+</code></pre><hr id="261e7660-b64c-8006-8b4b-da2ac7d8aed2"/><h3 id="261e7660-b64c-80ab-a7a3-d4159cb5136d" class="">8. <strong>Syscalls are Rare</strong></h3><p id="261e7660-b64c-80e6-b467-e5f27c13ac52" class="">Direct syscall gadgets (<code>int 0x80</code>, <code>syscall</code>) are often rare.</p><p id="261e7660-b64c-80eb-8007-c8e4f287de21" class="">If missing, you might have to use <strong>function calls</strong> from libc (<code>system(&quot;/bin/sh&quot;)</code>) instead of raw syscalls.</p><hr id="261e7660-b64c-8060-9879-e6587d18e44b"/><h3 id="261e7660-b64c-80ba-aede-e70192c18d7c" class="">9. <strong>Know Your Environment</strong></h3><ul id="261e7660-b64c-8089-ab37-e4eeac6f07cb" class="bulleted-list"><li style="list-style-type:disc"><strong>32-bit Linux</strong>: syscalls via <code>int 0x80</code>, registers: <code>eax=number, ebx,ecx,edx=args</code></li></ul><ul id="261e7660-b64c-80fa-9fd0-f315f8eafa54" class="bulleted-list"><li style="list-style-type:disc"><strong>64-bit Linux</strong>: syscalls via <code>syscall</code>, registers: <code>rax=number, rdi,rsi,rdx,args</code></li></ul><ul id="261e7660-b64c-803b-a194-ce33f8ae3341" class="bulleted-list"><li style="list-style-type:disc"><strong>Windows</strong>: Syscalls are different, usually exploit jumps to <code>WinExec</code> or <code>VirtualProtect</code>.</li></ul><hr id="261e7660-b64c-80b4-a886-cfb8d48eced8"/><h3 id="261e7660-b64c-80a2-aa9c-c348693c5bdb" class="">10. <strong>Finding the ROP Gadgets</strong></h3><p id="261e7660-b64c-8054-a51c-c3ec536bae45" class="">Use tools:</p><ul id="261e7660-b64c-8087-be37-e864e1b186a2" class="bulleted-list"><li style="list-style-type:disc"><code>ROPgadget --binary vuln</code></li></ul><ul id="261e7660-b64c-8053-8d7a-cfe6b6505a32" class="bulleted-list"><li style="list-style-type:disc"><code>ROPgadget --binary /lib/i386-linux-gnu/libc.so.6 | grep &quot;pop eax&quot;</code></li></ul><ul id="261e7660-b64c-8058-a9e6-de968a7bd78c" class="bulleted-list"><li style="list-style-type:disc"><code>ROPgadget --binary a.out --ropchain</code></li></ul><p id="262e7660-b64c-8010-aae4-f522c3decd7c" class="">
+</p><h1 id="261e7660-b64c-80d5-af9d-c1c9eb7b9c2f" class="">Challenges in RoP</h1><hr id="262e7660-b64c-8055-8293-cd694f0cf1d5"/><h3 id="262e7660-b64c-8046-b78f-ec26392ae39f" class=""><strong>Issue 1: Limited Control – The Magic Gadget</strong></h3><ul id="262e7660-b64c-80d4-a80c-fde79758382f" class="bulleted-list"><li style="list-style-type:disc"><strong>Problem:</strong><p id="262e7660-b64c-80de-9dbe-ccd1b79a667a" class="">Sometimes the available gadgets are too limited — e.g., you might not have a gadget to move values into a certain register, or you might not find a good syscall gadget.</p></li></ul><ul id="262e7660-b64c-8036-979c-e75dee051d4c" class="bulleted-list"><li style="list-style-type:disc"><strong>Example:</strong><p id="262e7660-b64c-801b-b431-d57d5caf4fed" class="">Suppose you want to execute <code>execve(&quot;/bin/sh&quot;, 0, 0)</code>, but you can’t find a <code>pop eax; ret</code> gadget to load the syscall number into <code>eax</code>.</p></li></ul><ul id="262e7660-b64c-806a-8733-d5bcaf5b1ae7" class="bulleted-list"><li style="list-style-type:disc"><strong>Solution:</strong><ul id="262e7660-b64c-80d7-90cf-d8634082f64d" class="bulleted-list"><li style="list-style-type:circle">Search the binary and linked libraries more carefully (use tools like <code>ROPgadget</code>, <code>ropper</code>).</li></ul><ul id="262e7660-b64c-808d-835d-c7cb32c390d6" class="bulleted-list"><li style="list-style-type:circle">Use &quot;magic gadgets&quot; like <code>int 0x80</code> or <code>syscall</code> already present in libc.</li></ul><ul id="262e7660-b64c-80e0-b04a-dbdb8e825816" class="bulleted-list"><li style="list-style-type:circle">Sometimes combine multiple gadgets (e.g., <code>xchg eax, ebx; ret</code> + <code>pop ebx; ret</code> to indirectly set <code>eax</code>).</li></ul><ul id="262e7660-b64c-805d-84b1-e763e6da0980" class="bulleted-list"><li style="list-style-type:circle">Use <strong>ret2libc</strong> instead of full ROP (directly call <code>system(&quot;/bin/sh&quot;)</code>).</li></ul></li></ul><hr id="262e7660-b64c-80a8-a491-d8664bad21e5"/><h3 id="262e7660-b64c-804f-9d1d-dba93a0a5ccd" class=""><strong>Issue 2: Address Space Layout Randomization (ASLR)</strong></h3><ul id="262e7660-b64c-8075-b444-f3ec804ece9f" class="bulleted-list"><li style="list-style-type:disc"><strong>Problem:</strong><p id="262e7660-b64c-8001-a544-faf966999218" class="">ASLR randomizes the base address of libraries and stack, so absolute addresses of gadgets change each run.</p></li></ul><ul id="262e7660-b64c-8010-98c3-ef18d6ab413c" class="bulleted-list"><li style="list-style-type:disc"><strong>Example:</strong><p id="262e7660-b64c-80b6-bb2a-c550821ff508" class="">You want to jump to <code>/bin/sh</code> in libc, but libc is loaded at a random base address.</p></li></ul><ul id="262e7660-b64c-8092-aa34-e473f3cc7cbb" class="bulleted-list"><li style="list-style-type:disc"><strong>Solution:</strong><ul id="262e7660-b64c-8019-ad19-e9781f151b09" class="bulleted-list"><li style="list-style-type:circle"><strong>Leak an address</strong>: Often there’s an infoleak bug (format string, out-of-bounds read). Once you leak one address (like <code>puts</code>), you can calculate the base of libc.</li></ul><ul id="262e7660-b64c-80eb-a25e-f53e9224ca05" class="bulleted-list"><li style="list-style-type:circle"><strong>Partial overwrite attacks</strong>: Overwrite only the low bytes of a return address if ASLR only randomizes the high bits.</li></ul><ul id="262e7660-b64c-8010-9eee-c022a02036fb" class="bulleted-list"><li style="list-style-type:circle">On 32-bit systems, ASLR entropy is weaker (only 16 bits), so brute force is sometimes possible.</li></ul></li></ul><hr id="262e7660-b64c-8044-8ed8-ff422d1d3c4b"/><h3 id="262e7660-b64c-801b-b7be-f6716315405e" class=""><strong>Issue 3: Stack Canaries</strong></h3><ul id="262e7660-b64c-80bd-8810-c57029a0b787" class="bulleted-list"><li style="list-style-type:disc"><strong>Problem:</strong><p id="262e7660-b64c-80aa-acec-f871069f43e8" class="">A random &quot;canary&quot; value is placed before the saved return address on the stack. If you overwrite the buffer without knowing it, the program crashes.</p></li></ul><ul id="262e7660-b64c-8053-9ec9-f49f7ef51ff4" class="bulleted-list"><li style="list-style-type:disc"><strong>Example:</strong><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="262e7660-b64c-80ac-b05f-efc98260cc73" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">[ buffer ][ canary ][ saved EBP ][ return address ]
+
+</code></pre><p id="262e7660-b64c-804f-944d-dd5d39865c9a" class="">If you overwrite the canary with the wrong value → segmentation fault.</p></li></ul><ul id="262e7660-b64c-80d3-9721-e0af0edcda0c" class="bulleted-list"><li style="list-style-type:disc"><strong>Solution:</strong><ul id="262e7660-b64c-805e-9ea8-c13f66a1c7f2" class="bulleted-list"><li style="list-style-type:circle">Leak the canary value first (e.g., via format string, buffer over-read).</li></ul><ul id="262e7660-b64c-80d7-82a0-eafc1d1f687b" class="bulleted-list"><li style="list-style-type:circle">Use an overflow that doesn’t touch the canary (e.g., overwrite return address via another bug).</li></ul><ul id="262e7660-b64c-80eb-bc1d-efb885d8e356" class="bulleted-list"><li style="list-style-type:circle">Use heap-based exploitation (bypass the stack entirely).</li></ul><ul id="262e7660-b64c-80d4-bbc7-e84bef3101de" class="bulleted-list"><li style="list-style-type:circle">Some advanced techniques: <strong>ret2csu</strong> or leveraging partial overwrites.</li></ul></li></ul><hr id="262e7660-b64c-80e3-a092-c705e5669e77"/><h3 id="262e7660-b64c-80bd-b1ac-fdb5c112229f" class=""><strong>Issue 4: Exotic Academic Solutions</strong></h3><ul id="262e7660-b64c-80b4-a1de-cd4bc49135a8" class="bulleted-list"><li style="list-style-type:disc"><strong>Problem:</strong><p id="262e7660-b64c-8015-ad6e-fb87776a5eab" class="">Researchers come up with protections like <strong>Shadow Stacks</strong>, <strong>Pointer Authentication Codes (PAC)</strong>, or compiler-level ROP mitigation (like <code>-fstack-protector-strong</code>, CFI).</p></li></ul><ul id="262e7660-b64c-802c-9838-eb49cad011bd" class="bulleted-list"><li style="list-style-type:disc"><strong>Solution:</strong><ul id="262e7660-b64c-8076-99cb-c1f572018aae" class="bulleted-list"><li style="list-style-type:circle">Harder to bypass. Sometimes attackers fall back to <strong>data-only attacks</strong> (modifying variables, not control flow).</li></ul><ul id="262e7660-b64c-8014-88bc-f69edd862d5c" class="bulleted-list"><li style="list-style-type:circle">Use <strong>JOP (Jump Oriented Programming)</strong> or <strong>COP (Call Oriented Programming)</strong> instead of ROP.</li></ul></li></ul><hr id="262e7660-b64c-80c0-b513-ca67fddd2d99"/><h3 id="262e7660-b64c-80fb-ac27-f9d4a60bd97b" class=""><strong>Control Flow Integrity (CFI)</strong></h3><ul id="262e7660-b64c-802c-a72b-da87b092cf1b" class="bulleted-list"><li style="list-style-type:disc"><strong>Problem:</strong><p id="262e7660-b64c-80a2-9fa8-eae604d2af06" class="">Enforces that indirect jumps/calls can only go to valid destinations (predefined set).</p></li></ul><ul id="262e7660-b64c-80cf-b12e-c460a1820669" class="bulleted-list"><li style="list-style-type:disc"><strong>Example:</strong><p id="262e7660-b64c-8066-90fc-caa15f45fd2a" class="">If you try to chain a gadget that wasn’t marked as a valid indirect jump target, execution is blocked.</p></li></ul><ul id="262e7660-b64c-80f6-8f7a-e4c7591d5c67" class="bulleted-list"><li style="list-style-type:disc"><strong>Solution:</strong><ul id="262e7660-b64c-8036-a413-cdaefabfee7e" class="bulleted-list"><li style="list-style-type:circle">Use valid call targets creatively (e.g., full functions instead of tiny gadgets).</li></ul><ul id="262e7660-b64c-80da-9d0e-eb515ee6c1f9" class="bulleted-list"><li style="list-style-type:circle">Sometimes combine with memory corruption to disable CFI (if possible).</li></ul><ul id="262e7660-b64c-806e-81bd-eff1a96beaa7" class="bulleted-list"><li style="list-style-type:circle">If CFI is weak (coarse-grained), attackers can still redirect execution to <em>allowed but unintended</em> functions.</li></ul></li></ul><hr id="262e7660-b64c-8053-a879-d009413cb1a4"/><h3 id="262e7660-b64c-807f-968d-c07fffb2b7c1" class=""><strong>Control Flow Integrity: Intel Edition!</strong></h3><ul id="262e7660-b64c-800f-a49f-c1b84441361f" class="bulleted-list"><li style="list-style-type:disc"><strong>Problem:</strong><p id="262e7660-b64c-808e-9af6-e0ed82372e6e" class="">Intel CET (Control-flow Enforcement Technology) introduces <strong>Shadow Stacks</strong> and <strong>Indirect Branch Tracking</strong>, making ROP/JOP very hard.</p></li></ul><ul id="262e7660-b64c-805e-9063-f8fa194f9be0" class="bulleted-list"><li style="list-style-type:disc"><strong>Solution:</strong><ul id="262e7660-b64c-80c5-b3da-d3885a09d564" class="bulleted-list"><li style="list-style-type:circle">Attacks shift toward <strong>data-oriented programming (DOP)</strong> → changing program logic by corrupting critical variables without hijacking control flow.</li></ul><ul id="262e7660-b64c-804d-9008-ec1a9ea18ade" class="bulleted-list"><li style="list-style-type:circle">Use kernel-level vulnerabilities to disable CET.</li></ul></li></ul><hr id="262e7660-b64c-800f-a04e-c4b5477f791a"/><h3 id="262e7660-b64c-801a-bbdd-f5fe38b08ceb" class=""><strong>Issue: Hacking Blind</strong></h3><ul id="262e7660-b64c-804d-828b-d49fba91d548" class="bulleted-list"><li style="list-style-type:disc"><strong>Problem:</strong><p id="262e7660-b64c-800f-8b7e-d9e24fd9e7d0" class="">Sometimes you don’t have an info leak, so you don’t know addresses (ASLR + NX + PIE = no obvious target).</p></li></ul><ul id="262e7660-b64c-80e7-9fd2-e298fd65e942" class="bulleted-list"><li style="list-style-type:disc"><strong>Solution:</strong><ul id="262e7660-b64c-8050-8f09-cc536da0d000" class="bulleted-list"><li style="list-style-type:circle"><strong>Blind ROP (BROP)</strong>: Crash the program repeatedly and infer memory layout by analyzing differences (used in network daemons).</li></ul><ul id="262e7660-b64c-8014-9924-ee4190e85919" class="bulleted-list"><li style="list-style-type:circle">Brute-force attacks (feasible on 32-bit with low entropy).</li></ul><ul id="262e7660-b64c-8060-a812-cf7776aa89fb" class="bulleted-list"><li style="list-style-type:circle">Look for bugs that give limited read/write primitives (turn it into an info leak).</li></ul></li></ul><figure id="262e7660-b64c-80e9-89a7-d29ec718de12" class="link-to-page"></figure><p id="262e7660-b64c-80dd-860e-e85669d67e49" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
