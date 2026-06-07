@@ -100,6 +100,38 @@ function formatDate(input) {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadBlog();
+
+  // Inject project cards
+  const projects = [
+    { title: 'Binary Vulnerability Scanner & Fuzzer', url: 'https://github.com/12bijaya/Binary_Pen_tester', desc: 'A security tool designed to scan binaries and locate vulnerabilities.', tags: ['Security', 'C++', 'Fuzzing'] },
+    { title: 'Format String Fuzzer', url: 'https://github.com/12bijaya/Format_String_Fuzzer', desc: 'Automated tool to audit and fuzz format string vulnerabilities.', tags: ['Python', 'Security', 'Fuzzing'] },
+    { title: 'Volatility3 GUI', url: 'https://github.com/12bijaya/Automation-For-Volatility', desc: 'A GUI wrapper and automation tool for memory forensics using Volatility 3.', tags: ['Python', 'GUI', 'Forensics'] },
+    { title: 'Assembly Language Calculator', url: 'https://github.com/12bijaya/assembly_language/tree/main/project', desc: 'A custom calculator built directly in x86_64 Linux assembly.', tags: ['Assembly', 'x86_64', 'Linux'] },
+    { title: 'Job Site Platform', url: 'https://github.com/12bijaya/JobSite', desc: 'Full-stack job platform (Node, MySQL, React).', tags: ['Node.js', 'React', 'MySQL'] },
+    { title: 'Automation: File Permission & User Management', url: 'https://github.com/12bijaya/Automation_on_file-_permission_user_management', desc: 'Bash scripts to automate file perms and user mgmt.', tags: ['Bash', 'Linux'] },
+    { title: 'Python Reverse Shell', url: 'https://github.com/12bijaya/python-project-reverse-shell', desc: 'Educational reverse shell for security learning.', tags: ['Python', 'Security'] },
+    { title: 'Cryptographic Tool (C)', url: 'https://github.com/12bijaya/C-project--crpotographic-tool', desc: 'C-based crypto utilities.', tags: ['C', 'Crypto'] },
+    { title: 'Install Packages Script', url: 'https://github.com/12bijaya/install_packages_script', desc: 'Bash script to install common packages quickly.', tags: ['Bash', 'DevOps'] }
+  ];
+  const grid = document.getElementById('projects-grid');
+  if (grid) {
+    const frag = document.createDocumentFragment();
+    projects.forEach((p) => {
+      const card = document.createElement('article');
+      card.className = 'project-card';
+      const h3 = document.createElement('h3');
+      const a = document.createElement('a');
+      a.href = p.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = p.title;
+      h3.appendChild(a);
+      const d = document.createElement('p'); d.textContent = p.desc;
+      const tags = document.createElement('div'); tags.className = 'tags';
+      (p.tags || []).forEach((t) => { const chip = document.createElement('span'); chip.className = 'tag'; chip.textContent = t; tags.appendChild(chip); });
+      card.appendChild(h3); card.appendChild(d); card.appendChild(tags);
+      frag.appendChild(card);
+    });
+    grid.appendChild(frag);
+  }
+
   // Reveal on scroll
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -116,38 +148,11 @@ document.addEventListener('DOMContentLoaded', () => {
     h.classList.add('animate-fade-up');
   });
 
-  // Animate paragraphs and project cards
+  // Animate paragraphs and project cards (now includes the newly injected .project-card elements)
   document.querySelectorAll('.section p, .project-card, .skills-list li').forEach((el, idx) => {
     el.classList.add('animate-fade-up');
     el.style.animationDelay = `${0.05 * (idx % 10)}s`;
   });
-
-  // Inject project cards
-  const projects = [
-    { title: 'Job Site Platform', url: 'https://github.com/12bijaya/JobSite', desc: 'Full-stack job platform (Node, MySQL, React).', tags: ['Node.js','React','MySQL'] },
-    { title: 'Automation: File Permission & User Management', url: 'https://github.com/12bijaya/Automation_on_file-_permission_user_management', desc: 'Bash scripts to automate file perms and user mgmt.', tags: ['Bash','Linux'] },
-    { title: 'Python Reverse Shell', url: 'https://github.com/12bijaya/python-project-reverse-shell', desc: 'Educational reverse shell for security learning.', tags: ['Python','Security'] },
-    { title: 'Cryptographic Tool (C)', url: 'https://github.com/12bijaya/C-project--crpotographic-tool', desc: 'C-based crypto utilities.', tags: ['C','Crypto'] },
-    { title: 'Install Packages Script', url: 'https://github.com/12bijaya/install_packages_script', desc: 'Bash script to install common packages quickly.', tags: ['Bash','DevOps'] }
-  ];
-  const grid = document.getElementById('projects-grid');
-  if (grid) {
-    const frag = document.createDocumentFragment();
-    projects.forEach((p) => {
-      const card = document.createElement('article');
-      card.className = 'project-card';
-      const h3 = document.createElement('h3');
-      const a = document.createElement('a');
-      a.href = p.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = p.title;
-      h3.appendChild(a);
-      const d = document.createElement('p'); d.textContent = p.desc;
-      const tags = document.createElement('div'); tags.className = 'tags';
-      (p.tags||[]).forEach((t)=>{ const chip = document.createElement('span'); chip.className='tag'; chip.textContent=t; tags.appendChild(chip); });
-      card.appendChild(h3); card.appendChild(d); card.appendChild(tags);
-      frag.appendChild(card);
-    });
-    grid.appendChild(frag);
-  }
 
   // Smooth scroll for navbar links (stable layout)
   document.querySelectorAll('.navbar a[href^="#"]').forEach((a) => {
@@ -161,5 +166,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+function copyDiscordUsername() {
+  const username = "0x1C01NC";
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(username).then(() => {
+      showCopiedFeedback();
+    }).catch(() => {
+      fallbackCopy(username);
+    });
+  } else {
+    fallbackCopy(username);
+  }
+}
+
+function fallbackCopy(text) {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    const successful = document.execCommand('copy');
+    if (successful) {
+      showCopiedFeedback();
+    } else {
+      alert("Failed to copy. Please manually copy: " + text);
+    }
+  } catch (err) {
+    alert("Failed to copy. Please manually copy: " + text);
+  }
+  document.body.removeChild(textArea);
+}
+
+function showCopiedFeedback() {
+  const btn = document.getElementById('copy-btn');
+  if (btn) {
+    btn.textContent = "COPIED";
+    btn.style.color = "#10b981";
+    btn.style.borderColor = "#10b981";
+    setTimeout(() => {
+      btn.textContent = "COPY";
+      btn.style.color = "#2fb3ff";
+      btn.style.borderColor = "#2fb3ff";
+    }, 2000);
+  }
+}
 
 

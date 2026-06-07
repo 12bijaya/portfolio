@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,7 +11,7 @@
     <link rel="stylesheet" href="style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
-<!--
+    <!--
     <style>
         body {
             margin: 0;
@@ -87,6 +88,7 @@
     </style>
 -->
 </head>
+
 <body>
 
     <header class="header">
@@ -97,6 +99,7 @@
             <a href="#skills">Skills</a>
             <a href="#projects">Projects</a>
             <a href="#ctf">CTF</a>
+            <a href="#achievements">Achievements</a>
             <a href="#blog">Blog</a>
             <a href="#contact">Contact</a>
         </nav>
@@ -106,16 +109,20 @@
     <main>
         <section id="whoami" class="home reveal" aria-label="Who am I">
             <div class="home-content">
-                <h1 class="hero-title animate-fade-up">Greetings!!<br>citizens of the world.<br>I'm <span class="accent">Iconic Whisper</span></h1>
+                <h1 class="hero-title animate-fade-up">Greetings!!<br>citizens of the world.<br>I'm <span
+                        class="accent">Iconic Whisper</span></h1>
                 <h3 class="hero-sub animate-fade-up animate-fade-delay">CTF Player</h3>
                 <p class="hero-desc animate-fade-up animate-fade-delay2">
                     I'm a cybersecurity enthusiast on the path to offensive security. From CTFs to hands‑on labs,
                     I learn by building, breaking, and documenting. Let's connect and collaborate.
                 </p>
                 <div class="home-sci">
-                    <a href="https://github.com/12bijaya" target="_blank" rel="noopener" aria-label="GitHub"><i class='bx bxl-github'></i></a>
-                    <a href="https://www.linkedin.com/in/bijaya-kumal/" target="_blank" rel="noopener" aria-label="LinkedIn"><i class='bx bxl-linkedin'></i></a>
-                    <a href="https://discord.com/channels/@me/1395065051840254033" target="_blank" rel="noopener" aria-label="Discord"><i class='bx bxl-discord'></i></a>
+                    <a href="https://github.com/12bijaya" target="_blank" rel="noopener" aria-label="GitHub"><i
+                            class='bx bxl-github'></i></a>
+                    <a href="https://www.linkedin.com/in/bijaya-kumal/" target="_blank" rel="noopener"
+                        aria-label="LinkedIn"><i class='bx bxl-linkedin'></i></a>
+                    <a href="https://discord.com/channels/@me/1395065051840254033" target="_blank" rel="noopener"
+                        aria-label="Discord"><i class='bx bxl-discord'></i></a>
                 </div>
                 <a href="#projects" class="btn-box">See my creations</a>
                 <a href="#blog" class="btn-box btn-ghost">Look at my solves</a>
@@ -132,16 +139,16 @@
             <div class="container">
                 <h2>About</h2>
                 <p>
-                    I focus on cybersecurity and systems, sharpening skills through CTFs, labs, and hands‑on builds.
-                    My core interests include binary exploitation, reverse engineering, DFIR, and Linux internals.
-                    I document what I learn with clear, reproducible writeups and prioritize ethical research and
-                    responsible disclosure.
+                    I am a CTF player competing with <strong>Blue Lock Eleven</strong>, focusing on binary exploitation,
+                    reverse engineering, and systems security. Outside of CTFs, I work as a part-time bug hunter and
+                    security researcher, obsessed with low-level details. I am dedicated to ethical research and
+                    responsible disclosure as I expand my capabilities in offensive security.
                 </p>
                 <div class="info-box">
                     <p>
-                        Currently exploring exploit mitigations (ASLR, NX, PIE), practicing Ghidra/radare2 workflows,
-                        and building small tools in C, Python, and Bash. Open to collaborating on security projects and
-                        writeups.
+                        Currently focusing on binary exploitation (<strong>PWN</strong>) and modern exploit mitigations,
+                        practicing vulnerability analysis workflows, and building custom security tools. Open to
+                        collaborating on CTF teams, projects, and writeups.
                     </p>
                 </div>
             </div>
@@ -151,15 +158,18 @@
             <div class="container">
                 <h2>Skills</h2>
                 <ul class="skills-list">
-                    <li>x86_64 Linux assembly</li>
+                    <li>x86_64 Linux assembly (<a href="https://github.com/12bijaya/assembly_language/tree/main/project"
+                            target="_blank" style="color: #7cc0ff; text-decoration: underline;">Calculator Project</a>)
+                    </li>
                     <li>C / C++</li>
                     <li>Python</li>
                     <li>JavaScript (Node.js, React)</li>
                     <li>Bash scripting</li>
                     <li>MySQL</li>
                     <li>Linux, shell, system internals</li>
-                    <li>Reverse engineering basics (Ghidra, radare2)</li>
-                    <li>Intro exploitation (buffers, ASLR, ROP)</li>
+                    <li>Reverse engineering (IDA Pro, Ghidra, radare2)</li>
+                    <li>Web security testing (Burp Suite)</li>
+                    <li>Intro exploitation (pwndbg, buffers, ASLR, ROP)</li>
                     <li>Forensics workflow (Volatility, strings, timeline)</li>
                     <li>Networking fundamentals and threat modeling</li>
                 </ul>
@@ -181,30 +191,75 @@
             <div class="container">
                 <h2>CTF Platforms & Writeups</h2>
                 <div class="resources-grid">
-                    <a class="resource-card" href="https://12bijaya.github.io/Over-the-Wire/bandit/OverTheWire.html" target="_blank" rel="noopener">
+                    <a class="resource-card" href="https://12bijaya.github.io/Over-the-Wire/bandit/OverTheWire.html"
+                        target="_blank" rel="noopener">
                         <h3>OverTheWire · Bandit</h3>
                         <p>Step-by-step notes and solutions for Bandit levels.</p>
                         <div class="tags"><span class="tag">wargames</span><span class="tag">linux</span></div>
                     </a>
-                    <a class="resource-card" href="https://12bijaya.github.io/Rootme-Solutions/" target="_blank" rel="noopener">
+                    <a class="resource-card" href="https://12bijaya.github.io/Rootme-Solutions/" target="_blank"
+                        rel="noopener">
                         <h3>RootMe Solutions</h3>
                         <p>Collection of RootMe challenge writeups and scripts.</p>
-                        <div class="tags"><span class="tag">web</span><span class="tag">pwn</span><span class="tag">re</span><span class="tag">forensics</span><span class="tag">steganography</span></div>
+                        <div class="tags"><span class="tag">web</span><span class="tag">pwn</span><span
+                                class="tag">re</span><span class="tag">forensics</span><span
+                                class="tag">steganography</span></div>
                     </a>
-                    <a class="resource-card" href="https://github.com/12bijaya/Portswigger" target="_blank" rel="noopener">
+                    <a class="resource-card" href="https://github.com/12bijaya/Portswigger" target="_blank"
+                        rel="noopener">
                         <h3>PortSwigger Labs</h3>
                         <p>Burp Academy notes, payloads, and lab walkthroughs.</p>
                         <div class="tags"><span class="tag">web</span><span class="tag">burp</span></div>
                     </a>
-                    <div class="resource-card disabled">
-                        <h3>Hack The Box</h3>
-                        <p>Coming soon.</p>
-                        <div class="tags"><span class="tag">htb</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="achievements" class="section reveal">
+            <div class="container">
+                <h2>Achievements</h2>
+                <div class="resources-grid">
+                    <div class="resource-card">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="achievement-icon-inline gold"
+                                style="color: #ffd700; font-size: 20px; display: flex; align-items: center;"><i
+                                    class='bx bxs-star'></i></span>
+                            <h3>Hall of Fame in NASA</h3>
+                        </div>
+                        <p>Acknowledged in the NASA Hall of Fame for identifying and reporting security vulnerabilities
+                            under their coordinated vulnerability disclosure program.</p>
+                        <div class="tags">
+                            <span class="tag">vdp</span>
+                            <span class="tag">nasa</span>
+                        </div>
                     </div>
-                    <div class="resource-card disabled">
-                        <h3>TryHackMe</h3>
-                        <p>Coming soon.</p>
-                        <div class="tags"><span class="tag">thm</span></div>
+                    <div class="resource-card">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="achievement-icon-inline silver"
+                                style="color: #cbd5e1; font-size: 20px; display: flex; align-items: center;"><i
+                                    class='bx bxs-trophy'></i></span>
+                            <h3>Second Position in Trinity CTF (Solo)</h3>
+                        </div>
+                        <p>Secured 2nd place competing solo in Trinity CTF, solving complex challenges across binary
+                            exploitation, reverse engineering, and web security.</p>
+                        <div class="tags">
+                            <span class="tag">ctf</span>
+                            <span class="tag">solo</span>
+                        </div>
+                    </div>
+                    <div class="resource-card">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="achievement-icon-inline bronze"
+                                style="color: #cd7f32; font-size: 20px; display: flex; align-items: center;"><i
+                                    class='bx bxs-medal'></i></span>
+                            <h3>Third Position in Hackastra CTF</h3>
+                        </div>
+                        <p>Achieved 3rd place in Hackastra CTF with the team, exploiting critical security
+                            vulnerabilities in the competition organized by Hackastra.</p>
+                        <div class="tags">
+                            <span class="tag">ctf</span>
+                            <span class="tag">team</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -220,10 +275,22 @@
         <section id="contact" class="section reveal">
             <div class="container">
                 <h2>Contact</h2>
-                <ul class="contact-list">
-                    <li><i class='bx bxs-envelope'></i> <a href="mailto:bijayakumal819@gmail.com">bijayakumal819@gmail.com</a></li>
-                    <li><i class='bx bxs-phone'></i> <a href="tel:9745671633">+977 9745671633</a></li>
-                </ul>
+                <div class="discord-card"
+                    style="background: rgba(16, 38, 64, 0.45); border: 1px solid rgba(80, 160, 220, 0.35); padding: 24px; border-radius: 12px; font-family: 'Fira Code', monospace; max-width: 500px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+                    <div style="color: #94a3b8; font-size: 16px; letter-spacing: 0.3px;">
+                        <span style="color: #2fb3ff; font-weight: 600;">Name:</span> <span
+                            style="color: #e2e8f0;">iconic_whisper</span>
+                    </div>
+                    <div
+                        style="display: flex; align-items: center; gap: 12px; justify-content: space-between; flex-wrap: wrap;">
+                        <div style="color: #94a3b8; font-size: 16px; letter-spacing: 0.3px;">
+                            <span style="color: #2fb3ff; font-weight: 600;">Discord UserName:</span> <span
+                                style="color: #e2e8f0;">0x1C01NC</span>
+                        </div>
+                        <button id="copy-btn" onclick="copyDiscordUsername()"
+                            style="background: transparent; color: #2fb3ff; border: 1px solid #2fb3ff; padding: 6px 18px; border-radius: 20px; font-family: 'Fira Code', monospace; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; outline: none; letter-spacing: 0.5px; user-select: none;">COPY</button>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -236,5 +303,6 @@
 
     <script src="scripts.js"></script>
 
-</body> 
+</body>
+
 </html>

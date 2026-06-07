@@ -1,12 +1,29 @@
 [
   {
+    "title": "PWN/BabyWin",
+    "date": "2026-06-07",
+    "summary": "Exploiting a format string vulnerability in a Win64 PE binary running under Wine 8.0. Includes mapping registers/stack, bypassing read-only memory, and constructing a Win64 ROP chain.",
+    "tags": [
+      "pwn",
+      "win64",
+      "format-string",
+      "rop",
+      "wine",
+      "hackastra-ctf"
+    ],
+    "readTime": 15,
+    "url": "blog/solve.html"
+  },
+  {
     "title": "ROP (Return Oriented Programming): A Practical Primer",
     "date": "2025-09-02",
     "summary": "From stack resources and janitorial gadgets to stack pivots, syscalls, and modern defenses.",
-    "tags": ["pwn", "rop", "exploitation"],
+    "tags": [
+      "pwn",
+      "rop",
+      "exploitation"
+    ],
     "readTime": 9,
     "url": "blog/rop.html"
   }
 ]
-
-

